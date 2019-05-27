@@ -1,0 +1,8 @@
+ja:
+  activerecord:
+    models:
+      post: 役職  #g
+
+    attributes:
+      post:
+        content: コンテンツ  #g

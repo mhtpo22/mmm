@@ -1,6 +1,9 @@
 class PostsController < ApplicationController
   def index
-    @posts = Post.all.order(created_at: :desc)
+    @posts = Post.order(created_at: :desc).page(params[:page])
+    respond_to do |format|
+      format.html
+    end
   end
 
   def new
@@ -16,28 +19,38 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new(content:params[:content])
-    if @post.save
-      redirect_to("/posts/index")
-    else
-      render("/posts/new")
+    @post = Post.new({content:params[:content],title:params[:title]})
+    respond_to do |format|
+      if @post.save
+        format.html { redirect_to action:'index', notice: 'Article was successfully created.' }
+        format.json { render :index, status: :created, location: @post }
+      else
+        format.html { render :new }
+        format.json { render json: @post.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def update
     @post = Post.find_by(id:params[:id])
-    @post.content = params[:content]
-    if @post.save
-      redirect_to("/posts/index")
-    else
-      render("/posts/edit")
+    @post.attributes = {content:params[:content],title:params[:title]}
+    respond_to do |format|
+      if @post.save
+        format.html { redirect_to action:"index", notice: 'Article was successfully updated.' }
+        format.json { render :index, status: :ok, location: @post }
+      else
+        format.html { render :edit }
+        format.json { render json: @post.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   def destroy
     @post = Post.find_by(id:params[:id])
     @post.destroy
-    redirect_to("/posts/index")
+    respond_to do |format|
+      format.html { redirect_to action:"index" }
+      format.json { head :no_content }
+    end
   end
-
 end

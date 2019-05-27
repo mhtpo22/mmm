@@ -2,10 +2,14 @@
   <div class="container">
     <div class="posts-show-item">
       <p>
+        ●<%= @post.title %>
+      </p>
+      <p>
         <%= @post.content %>
       </p>
+
       <div class="post-time">
-        <%= @post.created_at %>
+        <%= l(@post.created_at.in_time_zone('Tokyo'), format: :long) %>
       </div>
       <div class="post-menus">
         <%= link_to("編集", "/posts/#{@post.id}/edit") %>
